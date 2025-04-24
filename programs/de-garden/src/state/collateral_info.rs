@@ -1,5 +1,7 @@
 use anchor_lang::prelude::*;
 
+
+// TODO: delete?
 #[account]
 #[derive(InitSpace)]
 pub struct CollateralInfo {

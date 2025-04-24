@@ -20,3 +20,6 @@ pub const MINT_DECIMALS: u8 = 9;
 
 #[constant]
 pub const SENSOR_COLLATERAL_AMOUNT: u64 = 100 * MINT_DECIMALS as u64;
+
+#[constant]
+pub const SENSOR_DATA_REQUEST_COST: u64 = 4_000;

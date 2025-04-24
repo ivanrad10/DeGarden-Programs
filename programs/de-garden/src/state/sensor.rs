@@ -12,6 +12,7 @@ pub enum SensorStatus {
 #[derive(InitSpace)]
 pub struct Sensor {
     pub id: u64,
+    // host
     pub latitude: i64,
     pub longitude: i64,
     pub status: SensorStatus,

@@ -2,6 +2,7 @@ pub mod constants;
 pub mod error;
 pub mod instructions;
 pub mod state;
+pub mod events;
 
 use anchor_lang::prelude::*;
 
@@ -43,8 +44,8 @@ pub mod de_garden {
         instructions::sell_tokens_handler(ctx, amount)
     }
 
-    pub fn request_sensor_data(ctx: Context<AddHost>) -> Result<()> {
-        Ok(())
+    pub fn pay_sensor_data(ctx: Context<PaySensorData>, host: Pubkey, sensor_id: u64) -> Result<()> {
+        instructions::pay_sensor_data_handler(ctx, host, sensor_id)
     }
 
     pub fn slash_collateral(ctx: Context<AddHost>) -> Result<()> {
