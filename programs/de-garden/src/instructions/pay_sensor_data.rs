@@ -1,14 +1,18 @@
 use anchor_lang::prelude::*;
-use anchor_spl::{ token_2022::TransferChecked, token_interface::{Mint, TokenAccount, TokenInterface, transfer_checked}};
+use anchor_spl::{ token_2022::{Burn, TransferChecked}, token_interface::{self, transfer_checked, Mint, TokenAccount, TokenInterface}};
 
 use crate::{error::ErrorCode, events::PaySensorDataRequest, Sensor, SensorHost, SensorStatus, SENSOR_DATA_REQUEST_COST, SENSOR_HOST_SEED, SENSOR_SEED, TOKEN_MINT_SEED};
 
-pub fn pay_sensor_data_handler(ctx: Context<PaySensorData>, host: Pubkey, sensor_id: u64) -> Result<()> {
+pub fn pay_sensor_data_handler(ctx: Context<PaySensorData>, _host: Pubkey, sensor_id: u64) -> Result<()> {
     let sensor = &mut ctx.accounts.sensor;
 
     if sensor.status != SensorStatus::Collateralized {
         return err!(ErrorCode::WrongSensorStatus);
     }
+
+    // 10% is burnt
+    let sensor_income_amount = SENSOR_DATA_REQUEST_COST * 90 / 100;
+    let burn_amount = SENSOR_DATA_REQUEST_COST * 10 / 100;
 
     let transfer_checked_accounts = TransferChecked {
         from: ctx.accounts.payer_token_ata.to_account_info(),
@@ -22,14 +26,23 @@ pub fn pay_sensor_data_handler(ctx: Context<PaySensorData>, host: Pubkey, sensor
         transfer_checked_accounts
     );
 
-    // TODO: state for how much that sensor has earned
-    // TODO: fees
-
     transfer_checked(
         transfer_checked_ctx,
-        SENSOR_DATA_REQUEST_COST, 
+        sensor_income_amount, 
         ctx.accounts.mint.decimals
     )?;
+
+    let burn_cpi_ctx = CpiContext::new(
+        ctx.accounts.token_program.to_account_info(),
+        Burn {
+            mint: ctx.accounts.mint.to_account_info(),
+            from: ctx.accounts.payer_token_ata.to_account_info(),
+            authority: ctx.accounts.payer.to_account_info(),
+        },
+    );
+    token_interface::burn(burn_cpi_ctx, burn_amount)?;
+
+    sensor.total_income += sensor_income_amount;
 
     emit!(PaySensorDataRequest {
         sensor_id: sensor_id,
@@ -40,7 +53,7 @@ pub fn pay_sensor_data_handler(ctx: Context<PaySensorData>, host: Pubkey, sensor
 }
 
 #[derive(Accounts)]
-#[instruction(host: Pubkey, sensor_id: u64)]
+#[instruction(_host: Pubkey, sensor_id: u64)]
 pub struct PaySensorData<'info> {
     #[account(mut)]
     pub payer: Signer<'info>,
@@ -51,11 +64,10 @@ pub struct PaySensorData<'info> {
         associated_token::token_program = token_program
     )]
     pub payer_token_ata: InterfaceAccount<'info, TokenAccount>,
-    // TODO: add host in sensor_state
     #[account(
         mut,
         associated_token::mint = mint,
-        associated_token::authority = host,
+        associated_token::authority = _host,
         associated_token::token_program = token_program
     )]
     pub host_token_ata: InterfaceAccount<'info, TokenAccount>,
@@ -65,7 +77,7 @@ pub struct PaySensorData<'info> {
     )]
     pub mint: InterfaceAccount<'info, Mint>,
     #[account(
-        seeds = [SENSOR_HOST_SEED.as_bytes(), host.as_ref()],
+        seeds = [SENSOR_HOST_SEED.as_bytes(), _host.as_ref()],
         bump = sensor_host.bump
     )]
     pub sensor_host: Account<'info, SensorHost>,

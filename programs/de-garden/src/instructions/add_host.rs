@@ -4,11 +4,11 @@ use anchor_spl::{associated_token::AssociatedToken, token_interface::{Mint, Toke
 use crate::{SensorHost, SENSOR_HOST_SEED, TOKEN_MINT_SEED};
 
 pub fn add_host_handler(ctx: Context<AddHost>) -> Result<()> {
-    let sensor_host = &mut ctx.accounts.sensor_host;
+    let sensor_host_state = &mut ctx.accounts.sensor_host_state;
 
-    sensor_host.address = ctx.accounts.signer.key();
-    sensor_host.sensor_counter = 0;
-    sensor_host.bump = ctx.bumps.sensor_host;
+    sensor_host_state.address = ctx.accounts.host.key();
+    sensor_host_state.sensor_counter = 0;
+    sensor_host_state.bump = ctx.bumps.sensor_host_state;
 
     Ok(())
 }
@@ -16,15 +16,15 @@ pub fn add_host_handler(ctx: Context<AddHost>) -> Result<()> {
 #[derive(Accounts)]
 pub struct AddHost<'info> {
     #[account(mut)]
-    pub signer: Signer<'info>,
+    pub host: Signer<'info>,
     #[account(
         init,
-        payer = signer,
+        payer = host,
         space = 8 + SensorHost::INIT_SPACE,
-        seeds = [SENSOR_HOST_SEED.as_bytes(), signer.key().as_ref()],
+        seeds = [SENSOR_HOST_SEED.as_bytes(), host.key().as_ref()],
         bump
     )]
-    pub sensor_host: Account<'info, SensorHost>,
+    pub sensor_host_state: Account<'info, SensorHost>,
     #[account(
         seeds = [TOKEN_MINT_SEED.as_bytes()],
         bump 
@@ -32,9 +32,9 @@ pub struct AddHost<'info> {
     pub token_mint: InterfaceAccount<'info, Mint>,
     #[account(
         init,
-        payer = signer,
+        payer = host,
         associated_token::mint = token_mint,
-        associated_token::authority = signer,
+        associated_token::authority = host,
         associated_token::token_program = token_program
     )]
     pub host_token_ata: InterfaceAccount<'info, TokenAccount>,

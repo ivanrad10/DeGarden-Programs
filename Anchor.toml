@@ -6,7 +6,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-de_garden = "F9VSV1gPZQ3J9th67xYQ5yrYwePvTg3tFeFQcnPVzfKH"
+de_garden = "J8vn4oXKvsJyyRPcEscXcPkdpcEz4EoPhjM7ebVcvhqi"
 
 [registry]
 url = "https://api.apr.dev"

@@ -16,10 +16,13 @@ pub const GLOBAL_STATE_SEED: &str = "GLOBAL_STATE";
 pub const VAULT_SEED: &str = "VAULT";
 
 #[constant]
+pub const FEE_SEED: &str = "FEE";
+
+#[constant]
 pub const MINT_DECIMALS: u8 = 9;
 
 #[constant]
 pub const SENSOR_COLLATERAL_AMOUNT: u64 = 100 * MINT_DECIMALS as u64;
 
 #[constant]
-pub const SENSOR_DATA_REQUEST_COST: u64 = 4_000;
+pub const SENSOR_DATA_REQUEST_COST: u64 = 10_000_000; // 1 / 100 token

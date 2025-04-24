@@ -10,7 +10,7 @@ pub use constants::*;
 pub use instructions::*;
 pub use state::*;
 
-declare_id!("F9VSV1gPZQ3J9th67xYQ5yrYwePvTg3tFeFQcnPVzfKH");
+declare_id!("J8vn4oXKvsJyyRPcEscXcPkdpcEz4EoPhjM7ebVcvhqi");
 
 #[program]
 pub mod de_garden {
@@ -49,10 +49,6 @@ pub mod de_garden {
     }
 
     pub fn slash_collateral(ctx: Context<AddHost>) -> Result<()> {
-        Ok(())
-    }
-
-    pub fn claim_fees(ctx: Context<AddHost>) -> Result<()> {
         Ok(())
     }
 }

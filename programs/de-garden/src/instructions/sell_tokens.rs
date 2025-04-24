@@ -10,7 +10,7 @@ pub fn sell_tokens_handler(ctx: Context<SellTokens>, amount: u64) -> Result<()> 
 
     let mut total_payment = token_price.checked_mul(amount).ok_or(ErrorCode::Overflow)?;
     total_payment = total_payment.checked_div(10_u64.checked_pow(MINT_DECIMALS as u32).unwrap()).ok_or(ErrorCode::Overflow)?;
-
+    let total_payment_with_fee = total_payment * 95 / 100;
 
     let burn_cpi_ctx = CpiContext::new(
         ctx.accounts.token_program.to_account_info(),
@@ -22,8 +22,8 @@ pub fn sell_tokens_handler(ctx: Context<SellTokens>, amount: u64) -> Result<()> 
     );
     token_interface::burn(burn_cpi_ctx, amount)?;
 
-    **ctx.accounts.vault.to_account_info().try_borrow_mut_lamports()? -= total_payment;
-    **ctx.accounts.seller.to_account_info().try_borrow_mut_lamports()? += total_payment;    
+    **ctx.accounts.vault.to_account_info().try_borrow_mut_lamports()? -= total_payment_with_fee;
+    **ctx.accounts.seller.to_account_info().try_borrow_mut_lamports()? += total_payment_with_fee;    
 
     Ok(())
 }

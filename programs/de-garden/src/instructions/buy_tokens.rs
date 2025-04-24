@@ -9,6 +9,8 @@ pub fn buy_tokens_handler(ctx: Context<BuyTokens>, amount: u64) -> Result<()> {
     let token_price = global_state.token_price_in_lamports;
     let mut total_payment = token_price.checked_mul(amount).ok_or(ErrorCode::Overflow)?;
     total_payment = total_payment.checked_div(10_u64.checked_pow(MINT_DECIMALS as u32).unwrap()).ok_or(ErrorCode::Overflow)?;
+    // 5% fee
+    let total_payment_with_fee = total_payment * 105 / 100;
 
     let transfer_cpi_ctx = CpiContext::new(
         ctx.accounts.system_program.to_account_info(),
@@ -18,7 +20,7 @@ pub fn buy_tokens_handler(ctx: Context<BuyTokens>, amount: u64) -> Result<()> {
         }
     );
 
-    system_program::transfer(transfer_cpi_ctx, total_payment)?;
+    system_program::transfer(transfer_cpi_ctx, total_payment_with_fee)?;
 
     let mint_seeds: &[&[u8]] = &[TOKEN_MINT_SEED.as_bytes(), &[ctx.bumps.mint]];
     let signer_seeds: &[&[&[u8]]] = &[mint_seeds];

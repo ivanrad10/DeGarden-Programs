@@ -15,7 +15,7 @@ pub fn deposit_collateral_handler(ctx: Context<DespositCollateral>, _sensor_id: 
         TransferChecked {
             from: ctx.accounts.host_token_ata.to_account_info(),
             to: ctx.accounts.vault_token_ata.to_account_info(),
-            authority: ctx.accounts.signer.to_account_info(),
+            authority: ctx.accounts.host.to_account_info(),
             mint: ctx.accounts.token_mint.to_account_info()
         }
     );
@@ -36,14 +36,14 @@ pub fn deposit_collateral_handler(ctx: Context<DespositCollateral>, _sensor_id: 
 #[instruction(_sensor_id: u64)]
 pub struct DespositCollateral<'info> {
     #[account(mut)]
-    pub signer: Signer<'info>,
+    pub host: Signer<'info>,
     #[account(
-        seeds = [SENSOR_HOST_SEED.as_bytes(), signer.key().as_ref()],
-        bump = sensor_host.bump
+        seeds = [SENSOR_HOST_SEED.as_bytes(), host.key().as_ref()],
+        bump = sensor_host_state.bump
     )]
-    pub sensor_host: Account<'info, SensorHost>,
+    pub sensor_host_state: Account<'info, SensorHost>,
     #[account(
-        seeds = [SENSOR_SEED.as_bytes(), sensor_host.key().as_ref(), &_sensor_id.to_le_bytes()],
+        seeds = [SENSOR_SEED.as_bytes(), sensor_host_state.key().as_ref(), &_sensor_id.to_le_bytes()],
         bump = sensor.bump
     )]
     pub sensor: Account<'info, Sensor>,
@@ -54,7 +54,7 @@ pub struct DespositCollateral<'info> {
     pub token_mint: InterfaceAccount<'info, Mint>,
     #[account(
         associated_token::mint = token_mint,
-        associated_token::authority = signer,
+        associated_token::authority = host,
         associated_token::token_program = token_program
     )]
     pub host_token_ata: InterfaceAccount<'info, TokenAccount>,
