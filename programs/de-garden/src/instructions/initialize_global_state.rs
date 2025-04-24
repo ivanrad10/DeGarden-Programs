@@ -1,14 +1,16 @@
 use anchor_lang::prelude::*;
 use anchor_spl::{associated_token::AssociatedToken, token_interface::{Mint, TokenInterface, TokenAccount}};
 
-use crate::{program::DeGarden, GlobalState, Vault, GLOBAL_STATE_SEED, TOKEN_MINT_SEED, VAULT_SEED};
+use crate::{program::DeGarden, GlobalState, Vault, GLOBAL_STATE_SEED, MINT_DECIMALS, TOKEN_MINT_SEED, VAULT_SEED};
 
 
-pub fn initialize_global_state_handler(ctx: Context<InitializeGlobalState>) -> Result<()> {
+pub fn initialize_global_state_handler(ctx: Context<InitializeGlobalState>, token_price_in_lamports: u64) -> Result<()> {
     let global_state = &mut ctx.accounts.global_state;
     let vault = &mut ctx.accounts.vault;
 
+    global_state.token_price_in_lamports = token_price_in_lamports;
     global_state.bump = ctx.bumps.global_state;
+
     vault.bump = ctx.bumps.vault;
 
     Ok(())
@@ -37,7 +39,7 @@ pub struct InitializeGlobalState<'info> {
     #[account(
         init,
         payer = authority,
-        mint::decimals = 6,
+        mint::decimals = MINT_DECIMALS,
         mint::authority = token_mint,
         seeds = [TOKEN_MINT_SEED.as_bytes()],
         bump

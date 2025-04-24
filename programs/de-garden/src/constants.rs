@@ -16,7 +16,7 @@ pub const GLOBAL_STATE_SEED: &str = "GLOBAL_STATE";
 pub const VAULT_SEED: &str = "VAULT";
 
 #[constant]
-pub const MINT_DECIMALS: u64 = 1_000_000;
+pub const MINT_DECIMALS: u8 = 9;
 
 #[constant]
-pub const SENSOR_COLLATERAL_AMOUNT: u64 = 100 * MINT_DECIMALS;
+pub const SENSOR_COLLATERAL_AMOUNT: u64 = 100 * MINT_DECIMALS as u64;

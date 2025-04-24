@@ -15,8 +15,8 @@ declare_id!("F9VSV1gPZQ3J9th67xYQ5yrYwePvTg3tFeFQcnPVzfKH");
 pub mod de_garden {
     use super::*;
 
-    pub fn initialize_global_state(ctx: Context<InitializeGlobalState>) -> Result<()> {
-        instructions::initialize_global_state_handler(ctx)
+    pub fn initialize_global_state(ctx: Context<InitializeGlobalState>, token_price_in_lamports: u64) -> Result<()> {
+        instructions::initialize_global_state_handler(ctx, token_price_in_lamports)
     }
 
     pub fn add_host(ctx: Context<AddHost>) -> Result<()> {
@@ -35,8 +35,8 @@ pub mod de_garden {
         instructions::withdraw_collateral_handler(ctx, sensor_id)
     }
 
-    pub fn buy_tokens(ctx: Context<AddHost>) -> Result<()> {
-        Ok(())
+    pub fn buy_tokens(ctx: Context<BuyTokens>, amount: u64) -> Result<()> {
+        instructions::buy_tokens_handler(ctx, amount)
     }
 
     pub fn sell_tokens(ctx: Context<AddHost>) -> Result<()> {
