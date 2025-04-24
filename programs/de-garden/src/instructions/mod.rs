@@ -6,6 +6,7 @@ pub mod withdraw_collateral;
 pub mod buy_tokens;
 pub mod sell_tokens;
 pub mod pay_sensor_data;
+pub mod slash_collateral;
 
 pub use initialize_global_state::*;
 pub use add_host::*;
@@ -15,3 +16,4 @@ pub use withdraw_collateral::*;
 pub use buy_tokens::*;
 pub use sell_tokens::*;
 pub use pay_sensor_data::*;
+pub use slash_collateral::*;
