@@ -27,7 +27,7 @@ pub fn buy_tokens_handler(ctx: Context<BuyTokens>, amount: u64) -> Result<()> {
         ctx.accounts.token_program.to_account_info(),
         MintTo {
             mint: ctx.accounts.mint.to_account_info(),
-            to: ctx.accounts.buyer_chip_account.to_account_info(),
+            to: ctx.accounts.buyer_token_ata.to_account_info(),
             authority: ctx.accounts.mint.to_account_info()
         },
         signer_seeds
@@ -67,7 +67,7 @@ pub struct BuyTokens<'info> {
         associated_token::authority = buyer,
         associated_token::token_program = token_program
     )]
-    pub buyer_chip_account: InterfaceAccount<'info, TokenAccount>,
+    pub buyer_token_ata: InterfaceAccount<'info, TokenAccount>,
     pub token_program: Interface<'info, TokenInterface>,
     pub associated_token_program: Program<'info, AssociatedToken>,
     pub system_program: Program<'info, System>
