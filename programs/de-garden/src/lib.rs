@@ -39,8 +39,8 @@ pub mod de_garden {
         instructions::buy_tokens_handler(ctx, amount)
     }
 
-    pub fn sell_tokens(ctx: Context<AddHost>) -> Result<()> {
-        Ok(())
+    pub fn sell_tokens(ctx: Context<SellTokens>, amount: u64) -> Result<()> {
+        instructions::sell_tokens_handler(ctx, amount)
     }
 
     pub fn request_sensor_data(ctx: Context<AddHost>) -> Result<()> {
