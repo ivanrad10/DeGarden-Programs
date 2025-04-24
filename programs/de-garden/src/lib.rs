@@ -48,7 +48,7 @@ pub mod de_garden {
         instructions::pay_sensor_data_handler(ctx, host, sensor_id)
     }
 
-    pub fn slash_collateral(ctx: Context<AddHost>) -> Result<()> {
-        Ok(())
+    pub fn slash_collateral(ctx: Context<SlashCollateral>, host: Pubkey, sensor_id: u64) -> Result<()> {
+        instructions::slash_collateral_handler(ctx, host, sensor_id)
     }
 }
