@@ -1,13 +1,22 @@
 use anchor_lang::prelude::*;
-use anchor_spl::{token_2022::TransferChecked, token_interface::{self, Mint, TokenAccount, TokenInterface}};
+use anchor_spl::{
+    token_2022::TransferChecked,
+    token_interface::{self, Mint, TokenAccount, TokenInterface},
+};
 
-use crate::{error::ErrorCode, Sensor, SensorHost, SensorStatus, Vault, SENSOR_COLLATERAL_AMOUNT, SENSOR_HOST_SEED, SENSOR_SEED, TOKEN_MINT_SEED, VAULT_SEED};
+use crate::{
+    error::ErrorCode, Sensor, SensorHost, SensorStatus, Vault, SENSOR_COLLATERAL_AMOUNT,
+    SENSOR_HOST_SEED, SENSOR_SEED, TOKEN_MINT_SEED, VAULT_SEED,
+};
 
-pub fn withdraw_collateral_handler(ctx: Context<WithdrawCollateral>, _sensor_id: u64) -> Result<()> {
+pub fn withdraw_collateral_handler(
+    ctx: Context<WithdrawCollateral>,
+    _sensor_id: u64,
+) -> Result<()> {
     let sensor = &mut ctx.accounts.sensor;
 
     if sensor.status != SensorStatus::Collateralized {
-        return  err!(ErrorCode::WrongSensorStatus);
+        return err!(ErrorCode::WrongSensorStatus);
     }
 
     let vault_seeds: &[&[u8]] = &[VAULT_SEED.as_bytes(), &[ctx.accounts.vault.bump]];
@@ -19,15 +28,15 @@ pub fn withdraw_collateral_handler(ctx: Context<WithdrawCollateral>, _sensor_id:
             from: ctx.accounts.vault_token_ata.to_account_info(),
             to: ctx.accounts.host_token_ata.to_account_info(),
             authority: ctx.accounts.vault.to_account_info(),
-            mint: ctx.accounts.token_mint.to_account_info()
+            mint: ctx.accounts.token_mint.to_account_info(),
         },
-        signer_seeds
+        signer_seeds,
     );
 
     token_interface::transfer_checked(
         transfer_checked_cpi_context,
         SENSOR_COLLATERAL_AMOUNT,
-        ctx.accounts.token_mint.decimals
+        ctx.accounts.token_mint.decimals,
     )?;
 
     sensor.status = SensorStatus::Uncollateralized;
@@ -53,7 +62,7 @@ pub struct WithdrawCollateral<'info> {
     pub sensor: Account<'info, Sensor>,
     #[account(
         seeds = [TOKEN_MINT_SEED.as_bytes()],
-        bump 
+        bump
     )]
     pub token_mint: InterfaceAccount<'info, Mint>,
     #[account(

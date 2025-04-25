@@ -1,10 +1,18 @@
 use anchor_lang::prelude::*;
-use anchor_spl::{associated_token::AssociatedToken, token_interface::{Mint, TokenInterface, TokenAccount}};
+use anchor_spl::{
+    associated_token::AssociatedToken,
+    token_interface::{Mint, TokenAccount, TokenInterface},
+};
 
-use crate::{program::DeGarden, GlobalState, Vault, GLOBAL_STATE_SEED, MINT_DECIMALS, TOKEN_MINT_SEED, VAULT_SEED};
+use crate::{
+    program::DeGarden, GlobalState, Vault, GLOBAL_STATE_SEED, MINT_DECIMALS, TOKEN_MINT_SEED,
+    VAULT_SEED,
+};
 
-
-pub fn initialize_global_state_handler(ctx: Context<InitializeGlobalState>, token_price_in_lamports: u64) -> Result<()> {
+pub fn initialize_global_state_handler(
+    ctx: Context<InitializeGlobalState>,
+    token_price_in_lamports: u64,
+) -> Result<()> {
     let global_state = &mut ctx.accounts.global_state;
     let vault = &mut ctx.accounts.vault;
 
@@ -63,5 +71,5 @@ pub struct InitializeGlobalState<'info> {
     pub vault_token_ata: InterfaceAccount<'info, TokenAccount>,
     pub token_program: Interface<'info, TokenInterface>,
     pub associated_token_program: Program<'info, AssociatedToken>,
-    pub system_program: Program<'info, System>
+    pub system_program: Program<'info, System>,
 }

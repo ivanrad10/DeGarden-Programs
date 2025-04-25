@@ -1,23 +1,32 @@
 use anchor_lang::{prelude::*, system_program};
-use anchor_spl::{associated_token::AssociatedToken, token_2022::MintTo, token_interface::{self, Mint, TokenAccount, TokenInterface}};
+use anchor_spl::{
+    associated_token::AssociatedToken,
+    token_2022::MintTo,
+    token_interface::{self, Mint, TokenAccount, TokenInterface},
+};
 
-use crate::{error::ErrorCode, GlobalState, Vault, GLOBAL_STATE_SEED, MINT_DECIMALS, TOKEN_MINT_SEED, VAULT_SEED};
+use crate::{
+    error::ErrorCode, GlobalState, Vault, GLOBAL_STATE_SEED, MINT_DECIMALS, TOKEN_MINT_SEED,
+    VAULT_SEED,
+};
 
 pub fn buy_tokens_handler(ctx: Context<BuyTokens>, amount: u64) -> Result<()> {
     let global_state = &ctx.accounts.global_state;
 
     let token_price = global_state.token_price_in_lamports;
     let mut total_payment = token_price.checked_mul(amount).ok_or(ErrorCode::Overflow)?;
-    total_payment = total_payment.checked_div(10_u64.checked_pow(MINT_DECIMALS as u32).unwrap()).ok_or(ErrorCode::Overflow)?;
+    total_payment = total_payment
+        .checked_div(10_u64.checked_pow(MINT_DECIMALS as u32).unwrap())
+        .ok_or(ErrorCode::Overflow)?;
     // 5% fee
     let total_payment_with_fee = total_payment * 105 / 100;
 
     let transfer_cpi_ctx = CpiContext::new(
         ctx.accounts.system_program.to_account_info(),
-        system_program::Transfer{
+        system_program::Transfer {
             from: ctx.accounts.buyer.to_account_info(),
-            to: ctx.accounts.vault.to_account_info()
-        }
+            to: ctx.accounts.vault.to_account_info(),
+        },
     );
 
     system_program::transfer(transfer_cpi_ctx, total_payment_with_fee)?;
@@ -30,9 +39,9 @@ pub fn buy_tokens_handler(ctx: Context<BuyTokens>, amount: u64) -> Result<()> {
         MintTo {
             mint: ctx.accounts.mint.to_account_info(),
             to: ctx.accounts.buyer_token_ata.to_account_info(),
-            authority: ctx.accounts.mint.to_account_info()
+            authority: ctx.accounts.mint.to_account_info(),
         },
-        signer_seeds
+        signer_seeds,
     );
 
     token_interface::mint_to(mint_to_cpi_ctx, amount)?;
@@ -59,7 +68,7 @@ pub struct BuyTokens<'info> {
         mut,
         mint::authority = mint,
         seeds = [TOKEN_MINT_SEED.as_bytes()],
-        bump 
+        bump
     )]
     pub mint: InterfaceAccount<'info, Mint>,
     #[account(
@@ -72,5 +81,5 @@ pub struct BuyTokens<'info> {
     pub buyer_token_ata: InterfaceAccount<'info, TokenAccount>,
     pub token_program: Interface<'info, TokenInterface>,
     pub associated_token_program: Program<'info, AssociatedToken>,
-    pub system_program: Program<'info, System>
+    pub system_program: Program<'info, System>,
 }

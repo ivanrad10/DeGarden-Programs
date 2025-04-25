@@ -2,10 +2,14 @@ use anchor_lang::prelude::*;
 
 use crate::{Sensor, SensorHost, SensorStatus, SENSOR_HOST_SEED, SENSOR_SEED};
 
-pub fn register_sensor_handler(ctx: Context<RegisterSensor>, latitude: i64, longitude: i64) -> Result<()> {
+pub fn register_sensor_handler(
+    ctx: Context<RegisterSensor>,
+    latitude: i64,
+    longitude: i64,
+) -> Result<()> {
     let sensor_host = &mut ctx.accounts.sensor_host_state;
     let sensor = &mut ctx.accounts.sensor;
-    
+
     sensor.host = ctx.accounts.host.key();
     sensor.id = sensor_host.sensor_counter;
     sensor.status = SensorStatus::Uncollateralized;
@@ -38,5 +42,5 @@ pub struct RegisterSensor<'info> {
         bump
     )]
     pub sensor: Account<'info, Sensor>,
-    pub system_program: Program<'info, System>
+    pub system_program: Program<'info, System>,
 }

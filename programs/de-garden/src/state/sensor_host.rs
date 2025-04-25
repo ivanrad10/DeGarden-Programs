@@ -5,5 +5,5 @@ use anchor_lang::prelude::*;
 pub struct SensorHost {
     pub address: Pubkey,
     pub sensor_counter: u64,
-    pub bump: u8
+    pub bump: u8,
 }

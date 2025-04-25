@@ -4,5 +4,5 @@ use anchor_lang::prelude::*;
 #[derive(InitSpace)]
 pub struct GlobalState {
     pub token_price_in_lamports: u64,
-    pub bump: u8
+    pub bump: u8,
 }

@@ -1,8 +1,8 @@
 pub mod constants;
 pub mod error;
+pub mod events;
 pub mod instructions;
 pub mod state;
-pub mod events;
 
 use anchor_lang::prelude::*;
 
@@ -16,7 +16,10 @@ declare_id!("J8vn4oXKvsJyyRPcEscXcPkdpcEz4EoPhjM7ebVcvhqi");
 pub mod de_garden {
     use super::*;
 
-    pub fn initialize_global_state(ctx: Context<InitializeGlobalState>, token_price_in_lamports: u64) -> Result<()> {
+    pub fn initialize_global_state(
+        ctx: Context<InitializeGlobalState>,
+        token_price_in_lamports: u64,
+    ) -> Result<()> {
         instructions::initialize_global_state_handler(ctx, token_price_in_lamports)
     }
 
@@ -24,7 +27,11 @@ pub mod de_garden {
         instructions::add_host_handler(ctx)
     }
 
-    pub fn register_sensor(ctx: Context<RegisterSensor>, latitude: i64, longitude: i64) -> Result<()> {
+    pub fn register_sensor(
+        ctx: Context<RegisterSensor>,
+        latitude: i64,
+        longitude: i64,
+    ) -> Result<()> {
         instructions::register_sensor_handler(ctx, latitude, longitude)
     }
 
@@ -44,11 +51,19 @@ pub mod de_garden {
         instructions::sell_tokens_handler(ctx, amount)
     }
 
-    pub fn pay_sensor_data(ctx: Context<PaySensorData>, host: Pubkey, sensor_id: u64) -> Result<()> {
+    pub fn pay_sensor_data(
+        ctx: Context<PaySensorData>,
+        host: Pubkey,
+        sensor_id: u64,
+    ) -> Result<()> {
         instructions::pay_sensor_data_handler(ctx, host, sensor_id)
     }
 
-    pub fn slash_collateral(ctx: Context<SlashCollateral>, host: Pubkey, sensor_id: u64) -> Result<()> {
+    pub fn slash_collateral(
+        ctx: Context<SlashCollateral>,
+        host: Pubkey,
+        sensor_id: u64,
+    ) -> Result<()> {
         instructions::slash_collateral_handler(ctx, host, sensor_id)
     }
 }

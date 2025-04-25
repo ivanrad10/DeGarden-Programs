@@ -1,5 +1,8 @@
 use anchor_lang::prelude::*;
-use anchor_spl::{associated_token::AssociatedToken, token_interface::{Mint, TokenAccount, TokenInterface}};
+use anchor_spl::{
+    associated_token::AssociatedToken,
+    token_interface::{Mint, TokenAccount, TokenInterface},
+};
 
 use crate::{SensorHost, SENSOR_HOST_SEED, TOKEN_MINT_SEED};
 
@@ -27,7 +30,7 @@ pub struct AddHost<'info> {
     pub sensor_host_state: Account<'info, SensorHost>,
     #[account(
         seeds = [TOKEN_MINT_SEED.as_bytes()],
-        bump 
+        bump
     )]
     pub token_mint: InterfaceAccount<'info, Mint>,
     #[account(
@@ -40,5 +43,5 @@ pub struct AddHost<'info> {
     pub host_token_ata: InterfaceAccount<'info, TokenAccount>,
     pub token_program: Interface<'info, TokenInterface>,
     pub associated_token_program: Program<'info, AssociatedToken>,
-    pub system_program: Program<'info, System> 
+    pub system_program: Program<'info, System>,
 }

@@ -1,9 +1,19 @@
 use anchor_lang::prelude::*;
-use anchor_spl::{ token_2022::{Burn, TransferChecked}, token_interface::{self, transfer_checked, Mint, TokenAccount, TokenInterface}};
+use anchor_spl::{
+    token_2022::{Burn, TransferChecked},
+    token_interface::{self, transfer_checked, Mint, TokenAccount, TokenInterface},
+};
 
-use crate::{error::ErrorCode, events::PaySensorDataRequest, Sensor, SensorHost, SensorStatus, SENSOR_DATA_REQUEST_COST, SENSOR_HOST_SEED, SENSOR_SEED, TOKEN_MINT_SEED};
+use crate::{
+    error::ErrorCode, events::PaySensorDataRequest, Sensor, SensorHost, SensorStatus,
+    SENSOR_DATA_REQUEST_COST, SENSOR_HOST_SEED, SENSOR_SEED, TOKEN_MINT_SEED,
+};
 
-pub fn pay_sensor_data_handler(ctx: Context<PaySensorData>, _host: Pubkey, sensor_id: u64) -> Result<()> {
+pub fn pay_sensor_data_handler(
+    ctx: Context<PaySensorData>,
+    _host: Pubkey,
+    sensor_id: u64,
+) -> Result<()> {
     let sensor = &mut ctx.accounts.sensor;
 
     if sensor.status != SensorStatus::Collateralized {
@@ -18,18 +28,18 @@ pub fn pay_sensor_data_handler(ctx: Context<PaySensorData>, _host: Pubkey, senso
         from: ctx.accounts.payer_token_ata.to_account_info(),
         to: ctx.accounts.host_token_ata.to_account_info(),
         authority: ctx.accounts.payer.to_account_info(),
-        mint: ctx.accounts.mint.to_account_info()
+        mint: ctx.accounts.mint.to_account_info(),
     };
 
     let transfer_checked_ctx = CpiContext::new(
-        ctx.accounts.token_program.to_account_info(), 
-        transfer_checked_accounts
+        ctx.accounts.token_program.to_account_info(),
+        transfer_checked_accounts,
     );
 
     transfer_checked(
         transfer_checked_ctx,
-        sensor_income_amount, 
-        ctx.accounts.mint.decimals
+        sensor_income_amount,
+        ctx.accounts.mint.decimals,
     )?;
 
     let burn_cpi_ctx = CpiContext::new(
@@ -73,7 +83,7 @@ pub struct PaySensorData<'info> {
     pub host_token_ata: InterfaceAccount<'info, TokenAccount>,
     #[account(
         seeds = [TOKEN_MINT_SEED.as_bytes()],
-        bump 
+        bump
     )]
     pub mint: InterfaceAccount<'info, Mint>,
     #[account(

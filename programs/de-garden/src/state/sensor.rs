@@ -19,5 +19,5 @@ pub struct Sensor {
     pub last_uncollateralized_at: i64,
     pub last_slashed_at: i64,
     pub total_income: u64,
-    pub bump: u8
+    pub bump: u8,
 }
