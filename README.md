@@ -49,5 +49,5 @@ DeGarden is a decentralized protocol built on the Solana blockchain using the An
 
 ## 📜 Deployment
 
-This program uses the following program ID:
+This program is deployed to Devnet. It uses the following program ID: J8vn4oXKvsJyyRPcEscXcPkdpcEz4EoPhjM7ebVcvhqi
 
